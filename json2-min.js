@@ -11,31 +11,19 @@ if (typeof JSON !== "object") {
     var rx_escapable = /[\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
     var rx_dangerous = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
     function f(n) {
-        return (n < 10)
-            ? "0" + n
-            : n;
+        return (n < 10) ? "0" + n : n;
     }
     function this_value() {
         return this.valueOf();
     }
     if (typeof Date.prototype.toJSON !== "function") {
         Date.prototype.toJSON = function () {
-            return isFinite(this.valueOf())
-                ? (
-                    this.getUTCFullYear()
-                    + "-"
-                    + f(this.getUTCMonth() + 1)
-                    + "-"
-                    + f(this.getUTCDate())
-                    + "T"
-                    + f(this.getUTCHours())
-                    + ":"
-                    + f(this.getUTCMinutes())
-                    + ":"
-                    + f(this.getUTCSeconds())
-                    + "Z"
-                )
-                : null;
+            return isFinite(this.valueOf()) ? (this.getUTCFullYear() + "-" +
+                                               f(this.getUTCMonth() + 1) + "-" +
+                                               f(this.getUTCDate()) + "T" +
+                                               f(this.getUTCHours()) + ":" +
+                                               f(this.getUTCMinutes()) + ":" +
+                                               f(this.getUTCSeconds()) + "Z") : null;
         };
         Boolean.prototype.toJSON = this_value;
         Number.prototype.toJSON = this_value;
@@ -47,28 +35,21 @@ if (typeof JSON !== "object") {
     var rep;
     function quote(string) {
         rx_escapable.lastIndex = 0;
-        return rx_escapable.test(string)
-            ? "\"" + string.replace(rx_escapable, function (a) {
-                var c = meta[a];
-                return typeof c === "string"
-                    ? c
-                    : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
-            }) + "\""
-            : "\"" + string + "\"";
+        return rx_escapable.test(string) ?
+            "\"" + string.replace(rx_escapable, function (a) {
+                var c = meta[a]; return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+            }) + "\"" :
+            "\"" + string + "\"";
     }
     function str(key, holder) {
-        var i;          // The loop counter.
-        var k;          // The member key.
-        var v;          // The member value.
+        var i;
+        var k;
+        var v;
         var length;
         var mind = gap;
         var partial;
         var value = holder[key];
-        if (
-            value
-            && typeof value === "object"
-            && typeof value.toJSON === "function"
-        ) {
+        if (value && typeof value === "object" && typeof value.toJSON === "function") {
             value = value.toJSON(key);
         }
         if (typeof rep === "function") {
@@ -78,9 +59,7 @@ if (typeof JSON !== "object") {
         case "string":
             return quote(value);
         case "number":
-            return (isFinite(value))
-                ? String(value)
-                : "null";
+            return (isFinite(value)) ? String(value) : "null";
         case "boolean":
         case "null":
             return String(value);
@@ -95,18 +74,7 @@ if (typeof JSON !== "object") {
                 for (i = 0; i < length; i += 1) {
                     partial[i] = str(i, value) || "null";
                 }
-                v = partial.length === 0
-                    ? "[]"
-                    : gap
-                        ? (
-                            "[\n"
-                            + gap
-                            + partial.join(",\n" + gap)
-                            + "\n"
-                            + mind
-                            + "]"
-                        )
-                        : "[" + partial.join(",") + "]";
+                v = partial.length === 0 ? "[]" : gap ? ("[\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "]") : "[" + partial.join(",") + "]";
                 gap = mind;
                 return v;
             }
@@ -117,11 +85,7 @@ if (typeof JSON !== "object") {
                         k = rep[i];
                         v = str(k, value);
                         if (v) {
-                            partial.push(quote(k) + (
-                                (gap)
-                                    ? ": "
-                                    : ":"
-                            ) + v);
+                            partial.push(quote(k) + ((gap) ? ": " : ":") + v);
                         }
                     }
                 }
@@ -130,26 +94,18 @@ if (typeof JSON !== "object") {
                     if (Object.prototype.hasOwnProperty.call(value, k)) {
                         v = str(k, value);
                         if (v) {
-                            partial.push(quote(k) + (
-                                (gap)
-                                    ? ": "
-                                    : ":"
-                            ) + v);
+                            partial.push(quote(k) + ((gap) ? ": " : ":") + v);
                         }
                     }
                 }
             }
-            v = partial.length === 0
-                ? "{}"
-                : gap
-                    ? "{\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "}"
-                    : "{" + partial.join(",") + "}";
+            v = partial.length === 0 ? "{}" : gap ? "{\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "}" : "{" + partial.join(",") + "}";
             gap = mind;
             return v;
         }
     }
     if (typeof JSON.stringify !== "function") {
-        meta = {    // table of character substitutions
+        meta = {
             "\b": "\\b",
             "\t": "\\t",
             "\n": "\\n",
@@ -170,10 +126,7 @@ if (typeof JSON !== "object") {
                 indent = space;
             }
             rep = replacer;
-            if (replacer && typeof replacer !== "function" && (
-                typeof replacer !== "object"
-                || typeof replacer.length !== "number"
-            )) {
+            if (replacer && typeof replacer !== "function" && (typeof replacer !== "object" || typeof replacer.length !== "number")) {
                 throw new Error("JSON.stringify");
             }
             return str("", {"": value});
@@ -204,24 +157,12 @@ if (typeof JSON !== "object") {
             rx_dangerous.lastIndex = 0;
             if (rx_dangerous.test(text)) {
                 text = text.replace(rx_dangerous, function (a) {
-                    return (
-                        "\\u"
-                        + ("0000" + a.charCodeAt(0).toString(16)).slice(-4)
-                    );
+                    return ("\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4));
                 });
             }
-            if (
-                rx_one.test(
-                    text
-                        .replace(rx_two, "@")
-                        .replace(rx_three, "]")
-                        .replace(rx_four, "")
-                )
-            ) {
+            if (rx_one.test(text.replace(rx_two, "@").replace(rx_three, "]").replace(rx_four, ""))) {
                 j = eval("(" + text + ")");
-                return (typeof reviver === "function")
-                    ? walk({"": j}, "")
-                    : j;
+                return (typeof reviver === "function") ? walk({"": j}, "") : j;
             }
             throw new SyntaxError("JSON.parse");
         };
