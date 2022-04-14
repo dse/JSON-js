@@ -1,5 +1,7 @@
 if (typeof JSON !== "object") {
+    // jshint -W020
     JSON = {};
+    // jshint +W020
 }
 
 (function () {
@@ -14,7 +16,9 @@ if (typeof JSON !== "object") {
         return (n < 10) ? "0" + n : n;
     }
     function this_value() {
+        // jshint -W040
         return this.valueOf();
+        // jshint +W040
     }
     if (typeof Date.prototype.toJSON !== "function") {
         Date.prototype.toJSON = function () {
@@ -161,7 +165,9 @@ if (typeof JSON !== "object") {
                 });
             }
             if (rx_one.test(text.replace(rx_two, "@").replace(rx_three, "]").replace(rx_four, ""))) {
+                // jshint -W061
                 j = eval("(" + text + ")");
+                // jshint +W061
                 return (typeof reviver === "function") ? walk({"": j}, "") : j;
             }
             throw new SyntaxError("JSON.parse");
